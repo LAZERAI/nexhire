@@ -33,7 +33,6 @@ const CODERZON_JOBS = [
   type: "Full-time",
   mode: "Onsite",
   level: "Mid Level",
-  matchScore: Math.floor(Math.random() * (98 - 85 + 1) + 85), // Placeholder match score
   postedAt: "2 days ago"
 }));
 
@@ -103,14 +102,6 @@ export default function JobsPage() {
                 onClick={() => setSelectedJob(job)}
                 className="group p-6 rounded-xl border border-border bg-secondary/10 hover:border-primary/30 hover:bg-secondary/20 transition-all cursor-pointer relative overflow-hidden"
               >
-                {/* Match Badge */}
-                <div className="absolute top-0 right-0 p-4">
-                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold shadow-[0_0_10px_rgba(0,112,243,0.1)]">
-                    <Zap size={12} fill="currentColor" />
-                    {job.matchScore}% Match
-                  </div>
-                </div>
-
                 <div className="flex gap-6">
                   <div className="hidden sm:flex w-14 h-14 rounded-lg bg-secondary border border-border items-center justify-center shrink-0">
                     <Building2 size={24} className="text-muted-foreground" />
