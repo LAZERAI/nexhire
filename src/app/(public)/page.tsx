@@ -28,7 +28,7 @@ export default function LandingPage() {
             <span>Next-Gen Semantic Matching is here</span>
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 text-foreground">
             Hire and get hired <br className="hidden md:block" /> with precision AI.
           </h1>
           
@@ -57,7 +57,7 @@ export default function LandingPage() {
       </section>
 
       {/* Stats Bar */}
-      <section className="border-y border-border bg-black/50 backdrop-blur-sm">
+      <section className="border-y border-border bg-background/50 backdrop-blur-sm">
         <div className="container px-4 mx-auto py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -67,7 +67,7 @@ export default function LandingPage() {
               { label: "Match Accuracy", value: "98.2%" }
             ].map((stat, i) => (
               <div key={i} className="text-center">
-                <div className="text-2xl md:text-3xl font-bold text-white mb-1">{stat.value}</div>
+                <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">{stat.value}</div>
                 <div className="text-sm text-muted-foreground uppercase tracking-widest">{stat.label}</div>
               </div>
             ))}
@@ -79,7 +79,7 @@ export default function LandingPage() {
       <section className="py-24 bg-background">
         <div className="container px-4 mx-auto">
           <div className="max-w-2xl mx-auto text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">The AI Matching Pipeline</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-foreground">The AI Matching Pipeline</h2>
             <p className="text-muted-foreground leading-relaxed text-lg">
               We've replaced outdated keyword filtering with high-dimensional vector space analysis.
             </p>
@@ -107,7 +107,7 @@ export default function LandingPage() {
                 <div className="mb-4 inline-block p-3 rounded-lg bg-secondary border border-border group-hover:bg-primary/10 group-hover:border-primary/20 transition-all">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                <h3 className="text-xl font-bold mb-2 text-foreground">{feature.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
               </div>
             ))}
@@ -120,7 +120,7 @@ export default function LandingPage() {
         <div className="container px-4 mx-auto">
           <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-4">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Featured Opportunities</h2>
+              <h2 className="text-3xl font-bold mb-2 text-foreground">Featured Opportunities</h2>
               <p className="text-muted-foreground">Hand-picked roles from top-tier tech companies.</p>
             </div>
             <Link href="/jobs" className="flex items-center gap-2 text-primary font-semibold hover:underline">
@@ -164,8 +164,8 @@ export default function LandingPage() {
                     {job.type}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold mb-1">{job.title}</h3>
-                <div className="text-sm font-medium mb-4">{job.company} • {job.location}</div>
+                <h3 className="text-lg font-bold mb-1 text-foreground">{job.title}</h3>
+                <div className="text-sm font-medium mb-4 text-muted-foreground">{job.company} • {job.location}</div>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {job.tags.map((tag, j) => (
                     <span key={j} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary border border-border text-muted-foreground uppercase">
@@ -174,7 +174,7 @@ export default function LandingPage() {
                   ))}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">{job.salary}</span>
+                  <span className="text-sm font-bold text-foreground">{job.salary}</span>
                   <button className="text-xs font-bold text-primary hover:underline uppercase tracking-tighter flex items-center gap-1">
                     Apply Now <ArrowRight size={12} />
                   </button>
@@ -186,7 +186,7 @@ export default function LandingPage() {
       </section>
 
       {/* Community Preview */}
-      <section className="py-24 overflow-hidden">
+      <section className="py-24 overflow-hidden bg-background">
         <div className="container px-4 mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -194,7 +194,7 @@ export default function LandingPage() {
                 <Users size={14} />
                 <span>Join the Network</span>
               </div>
-              <h2 className="text-4xl font-bold mb-6">More than just a job board.</h2>
+              <h2 className="text-4xl font-bold mb-6 text-foreground">More than just a job board.</h2>
               <p className="text-xl text-muted-foreground leading-relaxed mb-8">
                 Connect with thousands of developers and recruiters in our professional feed. Share insights, build your network, and stay ahead of the curve.
               </p>
@@ -210,38 +210,47 @@ export default function LandingPage() {
                     <div className="p-1 rounded-full bg-primary/20">
                       <ArrowRight size={14} className="text-primary" />
                     </div>
-                    <span className="font-medium">{item}</span>
+                    <span className="font-medium text-foreground">{item}</span>
                   </li>
                 ))}
               </ul>
               
-              <Link href="/community" className="text-lg font-bold flex items-center gap-2 text-white hover:text-primary transition-colors">
+              <Link href="/community" className="text-lg font-bold flex items-center gap-2 text-primary hover:text-primary/80 transition-colors">
                 Explore Community <ArrowRight size={20} />
               </Link>
             </div>
             
             <div className="relative">
               <div className="absolute -inset-4 bg-primary/20 blur-3xl rounded-full opacity-50" />
-              <div className="relative border border-border rounded-2xl bg-secondary/50 p-4 aspect-[4/3] shadow-2xl">
-                <div className="w-full h-full rounded-xl border border-border bg-background overflow-hidden p-6">
-                  {/* Mock Feed Item */}
-                  <div className="flex gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-secondary animate-pulse" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 w-32 bg-secondary rounded animate-pulse" />
-                      <div className="h-3 w-20 bg-secondary rounded animate-pulse" />
+              <div className="relative space-y-4">
+                {[
+                  {
+                    author: "Arjun Nair",
+                    title: "The rise of Rust in Kochi's Fintech",
+                    content: "Seeing a massive shift towards Rust for backend services. If you're a Go dev, now is the time to pivot!",
+                    likes: 42
+                  },
+                  {
+                    author: "Meera Krishnan",
+                    title: "Hiring AI Engineers @ Coderzon",
+                    content: "We're looking for engineers passionate about LLMs. Apply through NexHire for priority review.",
+                    likes: 89
+                  }
+                ].map((post, i) => (
+                  <div key={i} className="p-6 rounded-xl border border-border bg-background shadow-lg hover:border-primary/30 transition-all">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center font-bold text-xs text-primary">
+                        {post.author[0]}
+                      </div>
+                      <span className="text-sm font-bold text-foreground">{post.author}</span>
+                    </div>
+                    <h3 className="font-bold text-foreground mb-2">{post.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{post.content}</p>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                      <Users size={14} /> {post.likes} found helpful
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <div className="h-4 w-full bg-secondary rounded animate-pulse" />
-                    <div className="h-4 w-full bg-secondary rounded animate-pulse" />
-                    <div className="h-4 w-2/3 bg-secondary rounded animate-pulse" />
-                  </div>
-                  <div className="mt-8 pt-8 border-t border-border flex gap-6">
-                    <div className="h-4 w-12 bg-secondary rounded animate-pulse" />
-                    <div className="h-4 w-12 bg-secondary rounded animate-pulse" />
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
