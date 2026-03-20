@@ -226,28 +226,48 @@ export default function LandingPage() {
                 {[
                   {
                     author: "Arjun Nair",
+                    reputation: "Expert",
+                    timestamp: "2h ago",
                     title: "The rise of Rust in Kochi's Fintech",
                     content: "Seeing a massive shift towards Rust for backend services. If you're a Go dev, now is the time to pivot!",
                     likes: 42
                   },
                   {
                     author: "Meera Krishnan",
+                    reputation: "Hiring Manager",
+                    timestamp: "5h ago",
                     title: "Hiring AI Engineers @ Coderzon",
                     content: "We're looking for engineers passionate about LLMs. Apply through NexHire for priority review.",
                     likes: 89
                   }
                 ].map((post, i) => (
                   <div key={i} className="p-6 rounded-xl border border-border bg-background shadow-lg hover:border-primary/30 transition-all">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center font-bold text-xs text-primary">
-                        {post.author[0]}
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center font-bold text-xs text-primary border border-border">
+                          {post.author[0]}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-foreground">{post.author}</span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-bold uppercase tracking-wider">
+                              {post.reputation}
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                            {post.timestamp}
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-sm font-bold text-foreground">{post.author}</span>
                     </div>
+                    
                     <h3 className="font-bold text-foreground mb-2">{post.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{post.content}</p>
+                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{post.content}</p>
+                    
                     <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
-                      <Users size={14} /> {post.likes} found helpful
+                      <div className="flex items-center gap-1 text-primary">
+                        <Users size={14} /> {post.likes} found helpful
+                      </div>
                     </div>
                   </div>
                 ))}
