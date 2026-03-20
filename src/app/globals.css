@@ -28,54 +28,56 @@
   --radius-sm: calc(var(--radius) - 4px);
 }
 
+/* Light Mode (Slate/Blue Theme) */
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
+  --background: #f8fafc;
+  --foreground: #0f172a;
   
-  --primary: #0070f3;
+  --primary: #2563eb;
   --primary-foreground: #ffffff;
   
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
   
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
   
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
   
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
   
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #0070f3;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #2563eb;
   
   --radius: 0.5rem;
 }
 
+/* Dark Mode (Premium Dark Grey/Blue) */
 .dark {
-  --background: #000000;
-  --foreground: #ffffff;
+  --background: #0f0f10;
+  --foreground: #f8fafc;
   
-  --primary: #0070f3; /* Electric Blue */
+  --primary: #3b82f6; /* Lighter Blue for Dark Mode */
   --primary-foreground: #ffffff;
   
-  --secondary: #111111;
-  --secondary-foreground: #ffffff;
+  --secondary: #1a1a1c;
+  --secondary-foreground: #f8fafc;
   
-  --muted: #111111;
-  --muted-foreground: #a1a1aa;
+  --muted: #1a1a1c;
+  --muted-foreground: #94a3b8;
   
-  --accent: #111111;
-  --accent-foreground: #ffffff;
+  --accent: #1a1a1c;
+  --accent-foreground: #f8fafc;
   
   --destructive: #7f1d1d;
   --destructive-foreground: #ffffff;
   
-  --border: #222222;
-  --input: #222222;
-  --ring: #0070f3;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #3b82f6;
 }
 
 @layer base {

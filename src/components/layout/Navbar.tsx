@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Bot, Menu, X } from "lucide-react";
+import { Bot, Menu, X, Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
@@ -15,7 +23,7 @@ export default function Navbar() {
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center transition-transform group-hover:scale-110">
             <Bot size={20} className="text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold tracking-tight">NexHire</span>
+          <span className="text-xl font-bold tracking-tight text-foreground">NexHire</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -32,15 +40,26 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4">
+          {/* Theme Toggle */}
+          {mounted && (
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+          )}
+
           <Link 
             href="/login" 
-            className="hidden sm:inline-flex text-sm font-medium hover:text-primary transition-colors"
+            className="hidden sm:inline-flex text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
           >
             Log in
           </Link>
           <Link 
             href="/signup" 
-            className="hidden sm:inline-flex px-4 py-2 bg-primary text-primary-foreground text-sm font-bold rounded-md hover:bg-primary/90 transition-colors shadow-[0_0_15px_rgba(0,112,243,0.3)]"
+            className="hidden sm:inline-flex px-4 py-2 bg-primary text-primary-foreground text-sm font-bold rounded-md hover:bg-primary/90 transition-colors shadow-[0_0_15px_rgba(59,130,246,0.4)]"
           >
             Get Started
           </Link>
