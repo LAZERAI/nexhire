@@ -6,247 +6,271 @@ import {
   Eye, 
   Zap, 
   ArrowRight, 
-  Clock, 
   CheckCircle2, 
-  AlertCircle 
+  AlertCircle,
+  Building2,
+  MapPin,
+  DollarSign
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  
   const { data: { user } } = await supabase.auth.getUser();
   
-  // Fetch Profile
+  // Fetch Profile & Stats
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user?.id)
     .single();
 
-  // Fetch Applications Count
   const { count: applicationsCount } = await supabase
     .from('applications')
     .select('*', { count: 'exact', head: true })
     .eq('candidate_id', user?.id);
 
-  // Fetch Recent Jobs (Mock Recommendations)
-  const { data: recentJobs } = await supabase
+  // Fetch Applications with details
+  const { data: recentApplications } = await supabase
+    .from('applications')
+    .select(`
+      id, status, created_at,
+      jobs (title, companies(name))
+    `)
+    .eq('candidate_id', user?.id)
+    .order('created_at', { ascending: false })
+    .limit(3);
+
+  // Mock Recommendations (Replace with vector search later)
+  const { data: recommendedJobs } = await supabase
     .from('jobs')
     .select('*, companies(name, logo_url)')
-    .limit(3)
-    .order('created_at', { ascending: false });
+    .limit(3);
 
-  // Calculate Profile Completion (Simple Logic)
+  // Calculate Profile Completion
   const calculateCompletion = () => {
     if (!profile) return 0;
-    let score = 20; // Base for existing
-    if (profile.full_name) score += 20;
-    if (profile.headline) score += 20;
-    if (profile.bio) score += 20;
-    if (profile.skills && profile.skills.length > 0) score += 20;
+    let score = 0;
+    if (profile.full_name) score += 25;
+    if (profile.headline) score += 25;
+    if (profile.bio) score += 25;
+    if (profile.resume_url) score += 25;
     return score;
   };
 
   const completionPercent = calculateCompletion();
+  const firstName = profile?.full_name?.split(' ')[0] || 'there';
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in-up">
       {/* Welcome Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Welcome back, {profile?.full_name?.split(' ')[0] || 'Candidate'}!
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+            Good morning, {firstName} 👋
           </h1>
-          <p className="text-muted-foreground">Here's what's happening with your job search today.</p>
+          <p className="text-muted-foreground mt-1">
+            You have <span className="text-primary font-bold">{applicationsCount || 0} active applications</span>. Let's find your next win.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/ai-match">
-            <button className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-bold rounded-lg shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:bg-primary/90 transition-all">
-              <Zap size={18} />
-              <span>AI Resume Scan</span>
-            </button>
+        <div className="flex gap-3">
+          <Link href="/profile" className="px-4 py-2 bg-secondary border border-border rounded-lg text-sm font-bold hover:bg-secondary/80 transition-colors">
+            Edit Profile
+          </Link>
+          <Link href="/ai-match" className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded-lg shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2">
+            <Zap size={16} /> AI Scan
           </Link>
         </div>
-      </div>
-
-      {/* Profile Completion */}
-      <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-2">
-          <span className="font-bold text-sm uppercase tracking-wider text-muted-foreground">Profile Completion</span>
-          <span className="font-bold text-primary">{completionPercent}%</span>
-        </div>
-        <div className="h-3 w-full bg-secondary rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-primary transition-all duration-1000 ease-out rounded-full relative overflow-hidden"
-            style={{ width: `${completionPercent}%` }}
-          >
-            <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite] skew-x-12"></div>
-          </div>
-        </div>
-        {completionPercent < 100 && (
-          <div className="mt-4 flex items-center gap-2 text-sm text-yellow-500/90 bg-yellow-500/10 px-3 py-2 rounded-lg border border-yellow-500/20">
-            <AlertCircle size={16} />
-            <span>Complete your profile to unlock 3x more AI matches.</span>
-            <Link href="/profile" className="ml-auto font-bold hover:underline">Complete Now →</Link>
-          </div>
-        )}
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
           icon={<Briefcase />} 
-          label="Applications" 
+          label="Applications Sent" 
           value={applicationsCount || 0} 
-          trend="+2 this week"
-        />
-        <StatCard 
-          icon={<FileText />} 
-          label="Saved Jobs" 
-          value={12} 
-          trend="Mock Data"
+          color="text-blue-500 bg-blue-500/10 border-blue-500/20"
         />
         <StatCard 
           icon={<Eye />} 
           label="Profile Views" 
-          value={48} 
-          trend="+15% vs last mo"
+          value={42} 
+          color="text-purple-500 bg-purple-500/10 border-purple-500/20"
         />
         <StatCard 
           icon={<Zap />} 
-          label="Avg Match Score" 
-          value="85%" 
-          trend="Top 10%"
-          highlight
+          label="AI Match Score" 
+          value="88%" 
+          color="text-yellow-500 bg-yellow-500/10 border-yellow-500/20"
+        />
+        <StatCard 
+          icon={<FileText />} 
+          label="Saved Jobs" 
+          value={15} 
+          color="text-green-500 bg-green-500/10 border-green-500/20"
         />
       </div>
 
-      {/* Content Grid */}
       <div className="grid lg:grid-cols-3 gap-8">
         
-        {/* Recommended Jobs */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <SparklesIcon /> Recommended for You
-            </h2>
-            <Link href="/jobs" className="text-sm font-medium text-primary hover:underline">View All</Link>
-          </div>
-
-          <div className="space-y-4">
-            {recentJobs && recentJobs.length > 0 ? (
-              recentJobs.map((job) => (
-                <div key={job.id} className="group p-5 rounded-xl border border-border bg-card hover:border-primary/30 transition-all cursor-pointer">
-                  <div className="flex justify-between items-start mb-2">
+        {/* Main Column */}
+        <div className="lg:col-span-2 space-y-8">
+          
+          {/* Top AI Matches */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold flex items-center gap-2">
+                <Zap className="text-primary" size={20} /> Your Top AI Matches
+              </h2>
+              <Link href="/jobs" className="text-sm font-medium text-primary hover:underline">View All</Link>
+            </div>
+            
+            <div className="space-y-4">
+              {recommendedJobs?.map((job) => (
+                <div key={job.id} className="group p-5 rounded-xl border border-border bg-card hover:border-primary/30 transition-all hover:shadow-md">
+                  <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{job.title}</h3>
-                      <p className="text-sm text-muted-foreground">{job.companies?.name || 'Unknown Company'} • {job.location}</p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{job.title}</h3>
+                        <span className="px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold uppercase">
+                          {Math.floor(Math.random() * (99 - 85 + 1) + 85)}% Match
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Building2 size={14} /> {job.companies?.name} 
+                        <span className="w-1 h-1 rounded-full bg-border" />
+                        <MapPin size={14} /> {job.location}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold">
-                      <Zap size={12} fill="currentColor" />
-                      {Math.floor(Math.random() * (99 - 88 + 1) + 88)}%
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {job.skills_required?.slice(0, 3).map((skill: string) => (
-                      <span key={skill} className="text-[10px] px-2 py-0.5 rounded-full bg-secondary border border-border text-muted-foreground">
-                        {skill}
-                      </span>
-                    ))}
+                    <button className="px-4 py-2 bg-secondary hover:bg-primary hover:text-primary-foreground text-foreground text-xs font-bold rounded-lg transition-colors">
+                      Apply
+                    </button>
                   </div>
                 </div>
-              ))
+              ))}
+              {(!recommendedJobs || recommendedJobs.length === 0) && (
+                <div className="p-8 border-2 border-dashed border-border rounded-xl text-center text-muted-foreground">
+                  No matches yet. Complete your profile to get started.
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Recent Applications */}
+          <section>
+            <h2 className="text-xl font-bold mb-4">Recent Applications</h2>
+            <div className="space-y-3">
+              {recentApplications?.map((app: any) => (
+                <div key={app.id} className="flex items-center justify-between p-4 rounded-xl border border-border bg-card/50">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                      <Briefcase size={18} className="text-muted-foreground" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-foreground">{app.jobs?.title}</div>
+                      <div className="text-xs text-muted-foreground">{app.jobs?.companies?.name}</div>
+                    </div>
+                  </div>
+                  <Badge status={app.status} />
+                </div>
+              ))}
+              {(!recentApplications || recentApplications.length === 0) && (
+                <div className="p-6 text-sm text-muted-foreground bg-secondary/20 rounded-xl border border-border">
+                  You haven't applied to any jobs yet.
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+
+        {/* Sidebar Column */}
+        <div className="space-y-6">
+          
+          {/* Profile Completion */}
+          <div className="bg-card border border-border rounded-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold">Profile Strength</h3>
+              <span className="text-primary font-bold">{completionPercent}%</span>
+            </div>
+            <div className="h-2 w-full bg-secondary rounded-full overflow-hidden mb-4">
+              <div 
+                className="h-full bg-primary transition-all duration-1000 ease-out rounded-full"
+                style={{ width: `${completionPercent}%` }}
+              />
+            </div>
+            {completionPercent < 100 ? (
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground">Complete these steps to rank higher:</p>
+                {!profile?.resume_url && (
+                  <Link href="/profile" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                    <div className="w-4 h-4 rounded-full border border-primary flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-transparent" />
+                    </div>
+                    Upload Resume
+                  </Link>
+                )}
+                {!profile?.headline && (
+                  <Link href="/profile" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                    <div className="w-4 h-4 rounded-full border border-primary flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-transparent" />
+                    </div>
+                    Add Professional Headline
+                  </Link>
+                )}
+              </div>
             ) : (
-              <div className="text-center py-12 border border-dashed border-border rounded-xl bg-secondary/5">
-                <p className="text-muted-foreground mb-4">No jobs found yet.</p>
-                <Link href="/jobs" className="px-4 py-2 bg-secondary border border-border rounded-md text-sm font-bold hover:bg-secondary/80">
-                  Browse Jobs
-                </Link>
+              <div className="flex items-center gap-2 text-sm text-green-500 font-medium">
+                <CheckCircle2 size={16} /> All set! You're an All-Star.
               </div>
             )}
           </div>
-        </div>
 
-        {/* Quick Actions / Sidebar */}
-        <div className="space-y-6">
-          <div className="bg-card border border-border rounded-xl p-6">
+          {/* Quick Actions */}
+          <div className="bg-secondary/20 border border-border rounded-xl p-6">
             <h3 className="font-bold mb-4">Quick Actions</h3>
-            <div className="space-y-3">
-              <ActionButton icon={<FileText size={18} />} label="Update Resume" />
-              <ActionButton icon={<CheckCircle2 size={18} />} label="View Applied Jobs" />
-              <ActionButton icon={<Briefcase size={18} />} label="Manage Alerts" />
+            <div className="space-y-2">
+              <Link href="/profile" className="block w-full text-left px-4 py-2 rounded-lg hover:bg-secondary transition-colors text-sm font-medium">
+                Update Resume
+              </Link>
+              <Link href="/jobs" className="block w-full text-left px-4 py-2 rounded-lg hover:bg-secondary transition-colors text-sm font-medium">
+                Browse New Jobs
+              </Link>
+              <Link href="/applications" className="block w-full text-left px-4 py-2 rounded-lg hover:bg-secondary transition-colors text-sm font-medium">
+                Check Status
+              </Link>
             </div>
           </div>
-
-          <div className="bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 rounded-xl p-6">
-            <h3 className="font-bold text-primary mb-2">Pro Tip</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Adding a "Headline" to your profile increases recruiter visibility by 40%.
-            </p>
-            <button className="text-xs font-bold uppercase tracking-wider text-primary hover:underline">
-              Edit Profile
-            </button>
-          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function StatCard({ icon, label, value, trend, highlight = false }: any) {
+function StatCard({ icon, label, value, color }: any) {
   return (
-    <div className={cn(
-      "p-5 rounded-xl border transition-all",
-      highlight 
-        ? "bg-primary/5 border-primary/20" 
-        : "bg-card border-border hover:border-border/80"
-    )}>
-      <div className="flex items-center justify-between mb-4">
-        <div className={cn(
-          "p-2 rounded-lg",
-          highlight ? "bg-primary/20 text-primary" : "bg-secondary text-muted-foreground"
-        )}>
+    <div className="p-5 rounded-xl border border-border bg-card hover:border-primary/20 transition-all group">
+      <div className="flex items-start justify-between mb-4">
+        <div className={cn("p-2 rounded-lg", color)}>
           {icon}
         </div>
-        <span className={cn(
-          "text-xs font-bold px-2 py-0.5 rounded-full",
-          highlight ? "bg-primary/10 text-primary" : "bg-green-500/10 text-green-500"
-        )}>
-          {trend}
-        </span>
       </div>
-      <div className="text-2xl font-bold mb-1 text-foreground">{value}</div>
-      <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{label}</div>
+      <div className="text-2xl font-bold text-foreground mb-1">{value}</div>
+      <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</div>
     </div>
   );
 }
 
-function ActionButton({ icon, label }: any) {
+function Badge({ status }: { status: string }) {
+  const styles = {
+    pending: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+    interviewing: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+    hired: "bg-green-500/10 text-green-500 border-green-500/20",
+    rejected: "bg-red-500/10 text-red-500 border-red-500/20",
+  };
+  
   return (
-    <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-secondary/50 transition-colors text-sm font-medium text-muted-foreground hover:text-foreground">
-      {icon}
-      <span>{label}</span>
-      <ArrowRight size={14} className="ml-auto opacity-50" />
-    </button>
+    <span className={cn("px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border", styles[status as keyof typeof styles] || styles.pending)}>
+      {status}
+    </span>
   );
-}
-
-function SparklesIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-primary"
-    >
-      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-    </svg>
-  )
 }
