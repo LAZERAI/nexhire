@@ -284,7 +284,7 @@ export default function JobsPage() {
                 <div 
                   key={job.id}
                   onClick={() => setSelectedJob(job)}
-                  className="group p-6 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer relative overflow-hidden"
+                  className="group p-6 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all cursor-pointer relative overflow-hidden hover-lift"
                 >
                   <div className="flex gap-6">
                     <div className="hidden sm:flex w-14 h-14 rounded-lg bg-secondary border border-border items-center justify-center shrink-0">

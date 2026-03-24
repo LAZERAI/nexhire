@@ -73,48 +73,51 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background">
-          <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
-            <Link 
-              href="/jobs" 
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Jobs
-            </Link>
-            <Link 
-              href="/community" 
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Community
-            </Link>
-            <Link 
-              href="/ai-match" 
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              AI Match
-            </Link>
-            <div className="h-px bg-border my-2" />
-            <Link 
-              href="/login" 
-              className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Log in
-            </Link>
-            <Link 
-              href="/signup" 
-              className="text-sm font-bold text-primary hover:text-primary/80 transition-colors py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Get Started
-            </Link>
-          </div>
+      <div 
+        className={cn(
+          "md:hidden border-t border-border bg-background overflow-hidden transition-all duration-300 ease-in-out",
+          isMobileMenuOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+        )}
+      >
+        <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
+          <Link 
+            href="/jobs" 
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Jobs
+          </Link>
+          <Link 
+            href="/community" 
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Community
+          </Link>
+          <Link 
+            href="/ai-match" 
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            AI Match
+          </Link>
+          <div className="h-px bg-border my-2" />
+          <Link 
+            href="/login" 
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Log in
+          </Link>
+          <Link 
+            href="/signup" 
+            className="text-sm font-bold text-primary hover:text-primary/80 transition-colors py-2"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Get Started
+          </Link>
         </div>
-      )}
+      </div>
     </header>
   );
 }
