@@ -48,7 +48,7 @@ export default function LandingPage() {
             </Link>
             
             <Link 
-              href="/create-company" 
+              href="/signup?role=recruiter" 
               className="px-8 py-4 bg-secondary text-secondary-foreground font-semibold rounded-lg border border-border hover:bg-secondary/80 transition-colors"
             >
               Post a Job
