@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Briefcase, Calendar, Building2, ChevronRight, XCircle, CheckCircle2, Clock } from "lucide-react";
+import { Briefcase, Calendar, Building2, ChevronRight, XCircle, CheckCircle2, Clock, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -19,39 +19,59 @@ type Application = {
   };
 };
 
-const TABS = ["All", "Active", "Hired", "Rejected"];
+const TABS = ["All", "Applied", "In Review", "Interview", "Hired", "Rejected"];
 
 export default function ApplicationsList({ applications }: { applications: Application[] }) {
   const [activeTab, setActiveTab] = useState("All");
 
   const filteredApps = applications.filter(app => {
     if (activeTab === "All") return true;
-    if (activeTab === "Active") return ["pending", "interviewing"].includes(app.status);
-    return app.status.toLowerCase() === activeTab.toLowerCase();
+    
+    const status = app.status.toLowerCase();
+    switch (activeTab) {
+      case "Applied": return status === "pending" || status === "applied";
+      case "In Review": return status === "reviewing" || status === "in-review";
+      case "Interview": return status === "interviewing" || status === "interview";
+      case "Hired": return status === "hired" || status === "offer";
+      case "Rejected": return status === "rejected";
+      default: return true;
+    }
   });
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "hired": return "bg-green-500/10 text-green-500 border-green-500/20";
+    switch (status.toLowerCase()) {
+      case "hired": 
+      case "offer": return "bg-green-500/10 text-green-500 border-green-500/20";
       case "rejected": return "bg-red-500/10 text-red-500 border-red-500/20";
-      case "interviewing": return "bg-primary/10 text-primary border-primary/20";
+      case "interviewing": 
+      case "interview": return "bg-purple-500/10 text-purple-500 border-purple-500/20";
+      case "reviewing": 
+      case "in-review": return "bg-blue-500/10 text-blue-500 border-blue-500/20";
       default: return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
     }
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "hired": return <CheckCircle2 size={14} />;
+    switch (status.toLowerCase()) {
+      case "hired":
+      case "offer": return <CheckCircle2 size={14} />;
       case "rejected": return <XCircle size={14} />;
-      case "interviewing": return <Briefcase size={14} />;
+      case "interviewing": 
+      case "interview": return <Briefcase size={14} />;
+      case "reviewing": 
+      case "in-review": return <Eye size={14} />;
       default: return <Clock size={14} />;
     }
+  };
+
+  const formatStatus = (status: string) => {
+    return status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' ');
   };
 
   return (
     <div>
       {/* Tabs */}
-      <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+      <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
         {TABS.map(tab => (
           <button
             key={tab}
@@ -72,10 +92,14 @@ export default function ApplicationsList({ applications }: { applications: Appli
       <div className="space-y-4">
         {filteredApps.length > 0 ? (
           filteredApps.map((app) => (
-            <div key={app.id} className="group p-6 rounded-xl border border-border bg-card hover:border-primary/30 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div key={app.id} className="group p-6 rounded-xl border border-border bg-card hover:border-primary/30 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in-up">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-secondary border border-border flex items-center justify-center shrink-0">
-                  <Building2 size={24} className="text-muted-foreground" />
+                <div className="w-12 h-12 rounded-lg bg-secondary border border-border flex items-center justify-center shrink-0 font-bold text-lg text-primary">
+                  {app.jobs.companies.logo_url ? (
+                    <img src={app.jobs.companies.logo_url} alt={app.jobs.companies.name} className="w-full h-full object-cover rounded-lg" />
+                  ) : (
+                    app.jobs.companies.name.charAt(0)
+                  )}
                 </div>
                 <div>
                   <h3 className="font-bold text-lg text-foreground mb-1 group-hover:text-primary transition-colors">
@@ -98,10 +122,13 @@ export default function ApplicationsList({ applications }: { applications: Appli
                   getStatusColor(app.status)
                 )}>
                   {getStatusIcon(app.status)}
-                  {app.status}
+                  {formatStatus(app.status)}
                 </div>
-                <Link href={`/jobs/${app.jobs.title}`} className="p-2 rounded-full hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
-                  <ChevronRight size={20} />
+                <Link 
+                  href={`/jobs/${app.jobs.title}`} 
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary hover:bg-secondary/80 text-sm font-bold text-foreground transition-colors"
+                >
+                  View Job <ChevronRight size={16} />
                 </Link>
               </div>
             </div>
@@ -110,9 +137,13 @@ export default function ApplicationsList({ applications }: { applications: Appli
           <div className="text-center py-20 border-2 border-dashed border-border rounded-xl bg-secondary/5">
             <Briefcase size={48} className="mx-auto text-muted-foreground mb-4 opacity-20" />
             <h3 className="text-xl font-bold text-foreground mb-2">No applications found</h3>
-            <p className="text-muted-foreground mb-6">You haven't applied to any {activeTab !== "All" ? activeTab.toLowerCase() : ""} jobs yet.</p>
+            <p className="text-muted-foreground mb-6">
+              {activeTab === "All" 
+                ? "You haven't applied to any jobs yet." 
+                : `No applications with status "${activeTab}".`}
+            </p>
             <Link href="/jobs" className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-all">
-              Find Jobs
+              Browse Jobs
             </Link>
           </div>
         )}

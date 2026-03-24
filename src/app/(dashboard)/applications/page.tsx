@@ -5,7 +5,7 @@ export default async function ApplicationsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { data: applications } = await supabase
+  const { data: applications, count } = await supabase
     .from('applications')
     .select(`
       id,
@@ -19,19 +19,22 @@ export default async function ApplicationsPage() {
           logo_url
         )
       )
-    `)
+    `, { count: 'exact' })
     .eq('candidate_id', user?.id)
     .order('created_at', { ascending: false });
 
-  // Transform data to match the component's expected type if necessary, 
-  // but Supabase query structure should mostly match.
-  // We might need to cast or ensure types are aligned.
-
   return (
     <div className="max-w-5xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">My Applications</h1>
-        <p className="text-muted-foreground">Track the status of your job applications in real-time.</p>
+      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2 flex items-center gap-3">
+            My Applications
+            <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold">
+              {count || 0}
+            </span>
+          </h1>
+          <p className="text-muted-foreground">Track the status of your job applications in real-time.</p>
+        </div>
       </div>
       <ApplicationsList applications={applications as any || []} />
     </div>
