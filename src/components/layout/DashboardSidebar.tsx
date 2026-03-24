@@ -12,7 +12,11 @@ import {
   LogOut, 
   Bot,
   Menu,
-  X
+  X,
+  Briefcase,
+  Building2,
+  PlusCircle,
+  Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/app/(auth)/actions";
@@ -21,19 +25,30 @@ type UserProfile = {
   full_name: string | null;
   email: string | undefined;
   avatar_url: string | null;
+  role?: string | null;
 };
 
 export default function DashboardSidebar({ user }: { user: UserProfile }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  const links = [
+  const candidateLinks = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/applications", label: "My Applications", icon: FileText },
     { href: "/ai-match", label: "AI Match", icon: Sparkles },
     { href: "/community", label: "Community", icon: Users },
     { href: "/profile", label: "Profile", icon: User },
   ];
+
+  const recruiterLinks = [
+    { href: "/recruiter", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/recruiter/post-job", label: "Post a Job", icon: PlusCircle },
+    { href: "/recruiter/my-jobs", label: "My Jobs", icon: Briefcase },
+    { href: "/recruiter/candidates", label: "Candidates", icon: Search },
+    { href: "/recruiter/company", label: "Company Profile", icon: Building2 },
+  ];
+
+  const links = user.role === "recruiter" ? recruiterLinks : candidateLinks;
 
   return (
     <>
