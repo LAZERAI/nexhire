@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 
 // Using require for CommonJS module to bypass ESM default export issues in Next.js
-const pdfParse = require("pdf-parse");
+// pdf-parse exports a function; this ensures both CJS and interop cases are covered.
+const _pdfParse = require("pdf-parse");
+const pdfParse = _pdfParse?.default ?? _pdfParse;
 
 export async function POST(request: Request) {
   try {
