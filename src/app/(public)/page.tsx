@@ -63,10 +63,10 @@ export default function LandingPage() {
           <div className="container px-4 mx-auto py-12">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
-                { label: "Active Jobs", value: "12,450+" },
-                { label: "Hired Talent", value: "8,200+" },
-                { label: "Companies", value: "450+" },
-                { label: "Match Accuracy", value: "98.2%" }
+                { label: "Active Jobs", value: "1,240+" },
+                { label: "Hired Talent", value: "680+" },
+                { label: "Companies", value: "85+" },
+                { label: "Match Accuracy", value: "94.2%" }
               ].map((stat, i) => (
                 <div key={i} className="text-center">
                   <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">{stat.value}</div>
@@ -309,21 +309,21 @@ export default function LandingPage() {
             </div>
             
             <div>
-              <h4 className="font-bold mb-6 text-white uppercase tracking-wider text-sm">Platform</h4>
+              <h4 className="font-bold mb-6 text-foreground uppercase tracking-wider text-sm">Platform</h4>
               <ul className="space-y-4 text-muted-foreground font-medium">
-                <li><Link href="/jobs" className="hover:text-white transition-colors">Jobs Board</Link></li>
-                <li><Link href="/ai-match" className="hover:text-white transition-colors">AI Match</Link></li>
-                <li><Link href="/community" className="hover:text-white transition-colors">Community</Link></li>
-                <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link href="/jobs" className="hover:text-foreground transition-colors">Jobs Board</Link></li>
+                <li><Link href="/ai-match" className="hover:text-foreground transition-colors">AI Match</Link></li>
+                <li><Link href="/community" className="hover:text-foreground transition-colors">Community</Link></li>
+                <li><Link href="/pricing" className="hover:text-foreground transition-colors">Pricing</Link></li>
               </ul>
             </div>
             
             <div>
-              <h4 className="font-bold mb-6 text-white uppercase tracking-wider text-sm">Legal</h4>
+              <h4 className="font-bold mb-6 text-foreground uppercase tracking-wider text-sm">Legal</h4>
               <ul className="space-y-4 text-muted-foreground font-medium">
-                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
-                <li><Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link></li>
+                <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
+                <li><Link href="/cookies" className="hover:text-foreground transition-colors">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
