@@ -203,7 +203,7 @@ export default function CommunityPage() {
               className={cn(
                 "px-5 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap border shrink-0",
                 activeCategory === cat 
-                  ? "bg-primary/10 border-primary text-primary shadow-[0_0_15px_rgba(0,112,243,0.1)]" 
+                  ? "bg-primary/10 border-primary text-primary shadow-[0_0_15px_rgba(59,130,246,0.1)]" 
                   : "bg-card border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground"
               )}
             >
@@ -311,8 +311,8 @@ export default function CommunityPage() {
 
       {/* Full Post Modal */}
       {selectedPost && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-background border border-border w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl relative">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedPost(null)}>
+          <div className="bg-background border border-border w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl relative" onClick={e => e.stopPropagation()}>
             <button 
               onClick={() => setSelectedPost(null)}
               className="absolute top-4 right-4 p-2 rounded-full bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground transition-colors"
@@ -363,8 +363,8 @@ export default function CommunityPage() {
 
       {/* Create Post Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-background border border-border w-full max-w-md rounded-2xl shadow-2xl p-8 text-center relative">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowCreateModal(false)}>
+          <div className="bg-background border border-border w-full max-w-md rounded-2xl shadow-2xl p-8 text-center relative" onClick={e => e.stopPropagation()}>
             <button 
               onClick={() => setShowCreateModal(false)}
               className="absolute top-4 right-4 p-2 rounded-full bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground transition-colors"

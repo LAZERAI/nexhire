@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ToastProvider } from "@/components/ui/toast";
+import { BackToTop } from "@/components/ui/back-to-top";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,9 +17,30 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "NexHire | AI-Powered Job Platform",
-  description: "Connect with elite opportunities using semantic AI matching.",
+  description: "Connect with elite opportunities using semantic AI matching. Join the next generation of recruitment powered by Llama 3.",
   icons: {
     icon: "/favicon.svg",
+  },
+  openGraph: {
+    title: "NexHire | AI-Powered Job Platform",
+    description: "Semantic matching for the modern workforce.",
+    url: "https://nexhire.com",
+    siteName: "NexHire",
+    images: [
+      {
+        url: "/favicon.svg",
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NexHire | AI-Powered Job Platform",
+    description: "Semantic matching for the modern workforce.",
+    images: ["/favicon.svg"],
   },
 };
 
@@ -37,7 +60,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ToastProvider>
+            {children}
+            <BackToTop />
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>
