@@ -299,16 +299,16 @@ export default function LandingPage() {
                 <li><Link href="/jobs" className="hover:text-white transition-colors">Jobs Board</Link></li>
                 <li><Link href="/ai-match" className="hover:text-white transition-colors">AI Match</Link></li>
                 <li><Link href="/community" className="hover:text-white transition-colors">Community</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Pricing</Link></li>
+                <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-bold mb-6 text-white uppercase tracking-wider text-sm">Legal</h4>
               <ul className="space-y-4 text-muted-foreground font-medium">
-                <li><Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Terms of Service</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors">Cookie Policy</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link></li>
               </ul>
             </div>
           </div>
