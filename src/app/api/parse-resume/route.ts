@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import pdf from "pdf-parse";
+
+// Using require for CommonJS module to bypass ESM default export issues in Next.js
+const pdfParse = require("pdf-parse");
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +23,8 @@ export async function POST(request: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    const data = await pdf(buffer);
+    // Call pdf-parse using the required instance
+    const data = await pdfParse(buffer);
     
     return NextResponse.json({ text: data.text });
   } catch (error: any) {
