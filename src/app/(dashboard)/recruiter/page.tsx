@@ -8,8 +8,7 @@ import {
   ArrowRight, 
   Search,
   Building2,
-  TrendingUp,
-  Sparkles
+  TrendingUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -154,7 +153,7 @@ export default async function RecruiterDashboard() {
         <div className="space-y-6">
           <div className="bg-card border border-border rounded-xl p-6">
             <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
-              <Sparkles size={18} className="text-primary" /> Top Matching Talent
+              <Zap size={18} className="text-primary" /> Top Matching Talent
             </h3>
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
