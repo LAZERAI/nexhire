@@ -309,7 +309,6 @@ export default function LandingPage() {
             </div>
             
             <div>
-              <div>
               <h4 className="footer-title font-bold mb-6 uppercase tracking-wider text-sm">Platform</h4>
               <ul className="space-y-4 text-foreground font-medium">
                 <li><Link href="/jobs" className="text-foreground hover:text-primary transition-colors">Jobs Board</Link></li>
