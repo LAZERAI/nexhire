@@ -48,12 +48,21 @@ export async function signup(formData: FormData) {
 
 export async function signInWithGoogle() {
   const supabase = await createClient();
+  const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback`
+    : "https://getnexthire.vercel.app/api/auth/callback";
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback`,
+      redirectTo: redirectUrl,
     },
   });
+
+  if (error) {
+    console.error("Google sign-in error:", error);
+    redirect(`/login?error=${encodeURIComponent(error.message)}`);
+  }
 
   if (data.url) {
     redirect(data.url);
