@@ -9,17 +9,30 @@ export async function POST(request: Request) {
     }
 
     const fetchEmbedding = async (attempt = 1): Promise<any> => {
-      const response = await fetch(
-        "https://router.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2",
-        {
+      const endpoint = "https://router.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2";
+      const body1 = JSON.stringify({ inputs: text });
+      const body2 = JSON.stringify({ model: "sentence-transformers/all-MiniLM-L6-v2", input: text });
+
+      const response = await fetch(endpoint, {
+        headers: {
+          Authorization: `Bearer ${process.env.HUGGING_FACE_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: body1,
+      });
+
+      if (response.status === 404) {
+        // Router path not found, fall back to embeddings API endpoint.
+        return await fetch("https://api-inference.huggingface.co/embeddings", {
           headers: {
             Authorization: `Bearer ${process.env.HUGGING_FACE_ACCESS_TOKEN}`,
             "Content-Type": "application/json",
           },
           method: "POST",
-          body: JSON.stringify({ inputs: text }),
-        }
-      );
+          body: body2,
+        });
+      }
 
       if (response.status === 503 && attempt < 4) {
         // Model is loading; wait and retry
