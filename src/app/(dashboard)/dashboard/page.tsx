@@ -42,24 +42,36 @@ export default async function DashboardPage() {
     .limit(3);
 
   // Mock Recommendations (Replace with vector search later)
-  const { data: recommendedJobs } = await supabase
+  const { data: recommendedJobsRaw } = await supabase
     .from('jobs')
     .select('*, companies(name, logo_url)')
     .limit(3);
+
+  const MOCK_TOP_MATCHES = [
+    { id: 'mj1', title: 'AI Engineer - Coderzon', companies: { name: 'Coderzon' }, location: 'Kochi', match: 88 },
+    { id: 'mj2', title: 'ML Ops Engineer - Coderzon', companies: { name: 'Coderzon' }, location: 'Bengaluru', match: 82 },
+    { id: 'mj3', title: 'Data Scientist - Coderzon', companies: { name: 'Coderzon' }, location: 'Remote', match: 76 },
+  ];
+
+  const recommendedJobs = (recommendedJobsRaw && recommendedJobsRaw.length > 0)
+    ? recommendedJobsRaw.map((job: any) => ({ ...job, match: Math.floor(Math.random() * 15) + 78 }))
+    : MOCK_TOP_MATCHES;
 
   // Calculate Profile Completion
   const calculateCompletion = () => {
     if (!profile) return 0;
     let score = 0;
-    if (profile.full_name) score += 25;
-    if (profile.headline) score += 25;
-    if (profile.bio) score += 25;
-    if (profile.resume_url) score += 25;
+    if (profile.full_name) score += 20;
+    if (profile.headline) score += 20;
+    if (profile.bio) score += 20;
+    if (Array.isArray(profile.skills) && profile.skills.length > 0) score += 20;
+    if (profile.resume_url) score += 20;
     return score;
   };
 
   const completionPercent = calculateCompletion();
-  const firstName = profile?.full_name?.split(' ')[0] || 'there';
+  const firstName = profile?.full_name ? profile.full_name.split(' ')[0] : null;
+  const greeting = firstName ? `Good morning, ${firstName} 👋` : 'Good morning! 👋';
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -67,7 +79,7 @@ export default async function DashboardPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-            Good morning, {firstName} 👋
+            {greeting}
           </h1>
           <p className="text-muted-foreground mt-1">
             You have <span className="text-primary font-bold">{applicationsCount || 0} active applications</span>. Let's find your next win.
@@ -119,9 +131,12 @@ export default async function DashboardPage() {
           {/* Top AI Matches */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <Zap className="text-primary" size={20} /> Your Top AI Matches
-              </h2>
+              <div>
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <Zap className="text-primary" size={20} /> Your Top AI Matches
+                </h2>
+                <p className="text-sm text-muted-foreground">Complete your profile for personalized matches.</p>
+              </div>
               <Link href="/jobs" className="text-sm font-medium text-primary hover:underline">View All</Link>
             </div>
             
@@ -133,7 +148,7 @@ export default async function DashboardPage() {
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{job.title}</h3>
                         <span className="px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold uppercase">
-                          {Math.floor(Math.random() * (99 - 85 + 1) + 85)}% Match
+                          {job.match ? `${job.match}% Match` : `${Math.floor(Math.random() * (99 - 85 + 1) + 85)}% Match`}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground flex items-center gap-2">

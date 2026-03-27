@@ -80,12 +80,15 @@ export default function Navbar() {
               >
                 Dashboard
               </Link>
+              <div className="hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold">
+                {user.email ? user.email.charAt(0).toUpperCase() : "U"}
+              </div>
               <button
                 onClick={async () => {
                   const supabase = createClient();
                   await supabase.auth.signOut();
                   setUser(null);
-                  router.push('/login');
+                  router.push('/');
                 }}
                 className="hidden sm:inline-flex px-4 py-2 bg-destructive text-white text-sm font-bold rounded-md hover:bg-destructive/90 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.35)]"
               >
@@ -162,7 +165,7 @@ export default function Navbar() {
                   await supabase.auth.signOut();
                   setUser(null);
                   setIsMobileMenuOpen(false);
-                  router.push('/login');
+                  router.push('/');
                 }}
                 className="text-left text-sm font-bold text-destructive hover:text-destructive/80 transition-colors py-2"
               >

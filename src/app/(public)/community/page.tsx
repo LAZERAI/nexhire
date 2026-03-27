@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Users, 
   MessageSquare, 
@@ -20,61 +20,62 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase-client";
 
 const CATEGORIES = ["All", "Hiring", "Career Tips", "Industry News"];
 
 const SAMPLE_POSTS = [
   {
     id: "1",
-    author: "Arjun Nair",
-    role: "Senior Architect",
+    author: "Nikhil Menon",
+    role: "AI/ML Engineer",
     reputation: "Expert",
     timestamp: "2h ago",
-    title: "The rise of Rust in Kochi's Fintech scene",
-    content: "Seeing a massive shift towards Rust for backend services in Infopark. Companies are prioritizing performance and safety over rapid iteration speed for core financial ledgers. If you're a C++ or Go dev, now is the time to pivot! We've seen a 40% increase in Rust job postings locally in the last quarter alone. The ecosystem is maturing rapidly with crates like Axum and Tokio becoming standard.",
-    reactions: { like: 42, heart: 12, fire: 5, discuss: 8 },
-    category: "Industry News",
-    initials: "AN",
-    color: "bg-orange-500/20 text-orange-500"
-  },
-  {
-    id: "2",
-    author: "Meera Krishnan",
-    role: "HR Head @ Coderzon",
-    reputation: "Hiring Manager",
-    timestamp: "5h ago",
-    title: "We're hiring 10+ AI Engineers in Kochi!",
-    content: "Coderzon is expanding its AI division significantly. We're looking for passionate engineers who want to work on cutting-edge LLM applications and agentic workflows. We offer competitive salaries matched with Bangalore standards, hybrid work options, and a generous learning budget. Apply through the NexHire jobs board for priority review - we check those applications first!",
-    reactions: { like: 89, heart: 45, fire: 20, discuss: 32 },
-    category: "Hiring",
-    initials: "MK",
+    title: "Building RAG apps with LangChain: practical pipeline",
+    content: "I built a Retrieval-Augmented Generation (RAG) app using LangChain for document QA and the results are awesome. Key work items: vectorize docs with OpenAI embeddings, use FAISS for fast similarity search, and orchestrate chains for prompt templating and follow-up answer generation. The UX is smoother when you cache embeddings and support incremental indexing. In Kerala-focused corp use cases, combining local datasets with global AI models reduced query latency by 35%.",
+    reactions: { like: 53, heart: 24, fire: 9, discuss: 11 },
+    category: "AI/ML Engineering",
+    initials: "NM",
     color: "bg-blue-500/20 text-blue-500"
   },
   {
-    id: "3",
-    author: "Rahul Varma",
-    role: "Lead Developer",
-    reputation: "Mentor",
-    timestamp: "1d ago",
-    title: "How to ace your Next.js 15 interviews",
-    content: "With the release of Next.js 15, interviewers are looking for deep understanding of Server Actions, partial prerendering, and the new caching semantics. Don't just follow tutorials—understand the 'why' behind the architecture. Be prepared to explain the difference between Server Components and Client Components in depth, and how hydration works. Pro tip: Build a small project using the new `use` hook to demonstrate you're up to date.",
-    reactions: { like: 156, heart: 80, fire: 60, discuss: 15 },
-    category: "Career Tips",
+    id: "2",
+    author: "Riya Varghese",
+    role: "Startup Founder",
+    reputation: "Industry News",
+    timestamp: "5h ago",
+    title: "Kerala startup ecosystem is booming: Q1 2026 review",
+    content: "The startup ecosystem in Kerala has seen strong momentum this quarter, with fresh funding rounds and accelerator launches. New support programs from KSIDC are driving deep tech incubations in AI, fintech, and healthcare. This is a great signal for local talent — expect more opportunities and competitive salaries. MNCs are also establishing innovation centers here, which makes the local market much more attractive for dev career growth.",
+    reactions: { like: 110, heart: 62, fire: 27, discuss: 19 },
+    category: "Industry News",
     initials: "RV",
     color: "bg-green-500/20 text-green-500"
   },
   {
-    id: "4",
-    author: "Anjali Menon",
-    role: "Product Designer",
-    reputation: "Rising Star",
+    id: "3",
+    author: "Neena Thomas",
+    role: "Senior HR Consultant",
+    reputation: "Career Tips",
     timestamp: "1d ago",
-    title: "Digital transformation in Kerala government sectors",
-    content: "Exciting projects coming up in the public sector. The focus on UI/UX is finally getting the attention it deserves with the new K-Smart initiative. Great opportunities for local designers to make a real impact on citizen services. We're moving away from clunky, bureaucratic interfaces to modern, accessible design systems. It's a huge challenge but incredibly rewarding.",
-    reactions: { like: 34, heart: 10, fire: 2, discuss: 5 },
+    title: "Salary negotiation tips for Kerala developers",
+    content: "Many developers in Kerala underprice themselves due to local market myths. Always benchmark against national and global rates, and highlight your impact metrics (productivity gains, release frequency, ROI). Practice empathetic negotiation: lead with collaboration and then present your target range backed by data. Remember: employers budget for value, not just hours, and a 10% increase is often feasible during hiring.",
+    reactions: { like: 142, heart: 72, fire: 33, discuss: 17 },
+    category: "Career Tips",
+    initials: "NT",
+    color: "bg-yellow-500/20 text-yellow-500"
+  },
+  {
+    id: "4",
+    author: "Jomon Philip",
+    role: "DevOps Specialist",
+    reputation: "Industry News",
+    timestamp: "1d ago",
+    title: "Kubernetes + DevOps best practices for 2026",
+    content: "In 2026, the focus is on GitOps, policy as code, and security-first Kubernetes operations. If you're not using tools like ArgoCD, Flux, and OPA, you're missing the standard trend. Container lifecycle automation with proper canary releases and automated rollback is critical. In Kerala, teams are adopting IaC with Terraform + Pulumi alongside managed clusters to reduce ops overhead.",
+    reactions: { like: 118, heart: 52, fire: 28, discuss: 14 },
     category: "Industry News",
-    initials: "AM",
-    color: "bg-purple-500/20 text-purple-500"
+    initials: "JP",
+    color: "bg-cyan-500/20 text-cyan-500"
   },
   {
     id: "5",
@@ -158,9 +159,72 @@ const SAMPLE_POSTS = [
 
 export default function CommunityPage() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [posts, setPosts] = useState(SAMPLE_POSTS);
   const [selectedPost, setSelectedPost] = useState<typeof SAMPLE_POSTS[0] | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [userReactions, setUserReactions] = useState<Record<string, string[]>>({});
+  const [expandedPostIds, setExpandedPostIds] = useState<string[]>([]);
+  const [loggedInUser, setLoggedInUser] = useState<any>(null);
+  const [isCreatingPost, setIsCreatingPost] = useState(false);
+  const [newPostTitle, setNewPostTitle] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
+  const [newPostCategory, setNewPostCategory] = useState("Industry News");
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const handleCreatePost = async () => {
+    if (!newPostTitle.trim() || !newPostContent.trim()) {
+      setFormError("Please enter title and content.");
+      return;
+    }
+
+    if (!loggedInUser) {
+      setFormError("Sign in to create posts.");
+      return;
+    }
+
+    setIsCreatingPost(true);
+    setFormError(null);
+
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase.from("posts").insert({
+        author_id: loggedInUser.id,
+        content: newPostContent,
+        category: newPostCategory,
+      });
+
+      if (error) {
+        setFormError(error.message);
+        setIsCreatingPost(false);
+        return;
+      }
+
+      const newPost = {
+        id: `${Date.now()}`,
+        author: loggedInUser.email || "You",
+        role: "Community Member",
+        reputation: "Contributor",
+        timestamp: "Just now",
+        title: newPostTitle,
+        content: newPostContent,
+        reactions: { like: 0, heart: 0, fire: 0, discuss: 0 },
+        category: newPostCategory,
+        initials: (loggedInUser.email || "U").charAt(0).toUpperCase(),
+        color: "bg-primary/20 text-primary",
+      };
+
+      setPosts(prev => [newPost, ...prev]);
+      setNewPostTitle("");
+      setNewPostContent("");
+      setNewPostCategory("Industry News");
+      setShowCreateModal(false);
+    } catch (err: any) {
+      setFormError(err.message || "Unable to create post.");
+    } finally {
+      setIsCreatingPost(false);
+    }
+  };
+
 
   const toggleReaction = (postId: string, type: string) => {
     setUserReactions(prev => {
@@ -172,7 +236,23 @@ export default function CommunityPage() {
     });
   };
 
-  const filteredPosts = SAMPLE_POSTS.filter(post => 
+  useEffect(() => {
+    const supabase = createClient();
+    const loadSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setLoggedInUser(data.session?.user ?? null);
+    };
+
+    loadSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+      setLoggedInUser(session?.user ?? null);
+    });
+
+    return () => authListener?.subscription?.unsubscribe();
+  }, []);
+
+  const filteredPosts = posts.filter(post => 
     activeCategory === "All" || post.category === activeCategory
   );
 
@@ -254,10 +334,30 @@ export default function CommunityPage() {
                 <h2 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
                   {post.title}
                 </h2>
-                <p className="text-muted-foreground leading-relaxed line-clamp-2">
+                <p
+                  className={cn(
+                    "text-muted-foreground leading-relaxed overflow-hidden transition-all duration-500",
+                    expandedPostIds.includes(post.id)
+                      ? "max-h-screen"
+                      : "max-h-[3em]"
+                  )}
+                >
                   {post.content}
                 </p>
-                <span className="text-primary text-sm font-medium mt-1 inline-block hover:underline">Read more</span>
+                <button
+                  type="button"
+                  className="text-primary text-sm font-medium mt-1 inline-block hover:underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (expandedPostIds.includes(post.id)) {
+                      setExpandedPostIds(prev => prev.filter(id => id !== post.id));
+                    } else {
+                      setExpandedPostIds(prev => [...prev, post.id]);
+                    }
+                  }}
+                >
+                  {expandedPostIds.includes(post.id) ? "Read less" : "Read more"}
+                </button>
               </div>
 
               <div className="pt-4 border-t border-border flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
@@ -364,28 +464,66 @@ export default function CommunityPage() {
       {/* Create Post Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowCreateModal(false)}>
-          <div className="bg-background border border-border w-full max-w-md rounded-2xl shadow-2xl p-8 text-center relative" onClick={e => e.stopPropagation()}>
-            <button 
+          <div className="bg-background border border-border w-full max-w-md rounded-2xl shadow-2xl p-8 relative" onClick={(e) => e.stopPropagation()}>
+            <button
               onClick={() => setShowCreateModal(false)}
               className="absolute top-4 right-4 p-2 rounded-full bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground transition-colors"
             >
               <X size={20} />
             </button>
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-              <Lock size={32} className="text-primary" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Sign in to Post</h2>
-            <p className="text-muted-foreground mb-8">
-              Join the conversation! You need an account to create posts and engage with the community.
-            </p>
-            <div className="flex flex-col gap-3">
-              <Link href="/login" className="w-full py-3 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-all">
-                Log In
-              </Link>
-              <Link href="/signup" className="w-full py-3 bg-secondary text-foreground font-bold rounded-lg border border-border hover:bg-secondary/80 transition-all">
-                Create Account
-              </Link>
-            </div>
+
+            {!loggedInUser ? (
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                  <Lock size={32} className="text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground mb-2">Sign in to Post</h2>
+                <p className="text-muted-foreground mb-6">Join the community first so you can create posts, comment, and react.</p>
+                <div className="flex flex-col gap-3">
+                  <Link href="/login" className="w-full py-3 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-all">
+                    Log In
+                  </Link>
+                  <Link href="/signup" className="w-full py-3 bg-secondary text-foreground font-bold rounded-lg border border-border hover:bg-secondary/80 transition-all">
+                    Create Account
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h2 className="text-2xl font-bold text-foreground mb-4">Create Post</h2>
+                {formError && (
+                  <div className="mb-4 text-sm text-destructive font-medium">{formError}</div>
+                )}
+                <input
+                  value={newPostTitle}
+                  onChange={(e) => setNewPostTitle(e.target.value)}
+                  placeholder="Post title"
+                  className="w-full mb-3 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                <textarea
+                  value={newPostContent}
+                  onChange={(e) => setNewPostContent(e.target.value)}
+                  placeholder="Write your post content..."
+                  className="w-full mb-3 px-3 py-2 border border-border rounded-lg bg-background text-foreground h-28 resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                <select
+                  value={newPostCategory}
+                  onChange={(e) => setNewPostCategory(e.target.value)}
+                  className="w-full mb-4 px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                >
+                  <option>Hiring</option>
+                  <option>Career Tips</option>
+                  <option>Industry News</option>
+                </select>
+                <button
+                  onClick={handleCreatePost}
+                  disabled={isCreatingPost}
+                  className="w-full py-3 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-all disabled:opacity-60"
+                >
+                  {isCreatingPost ? "Posting..." : "Post"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

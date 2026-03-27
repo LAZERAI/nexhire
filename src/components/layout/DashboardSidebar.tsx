@@ -62,7 +62,7 @@ export default function DashboardSidebar({ user }: { user: UserProfile }) {
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-[#0f0f10] border-r border-border transform transition-transform duration-300 md:translate-x-0 md:static flex flex-col",
+        "fixed inset-y-0 left-0 z-40 w-64 bg-background border-r border-border transform transition-transform duration-300 md:translate-x-0 md:static flex flex-col",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Logo */}
