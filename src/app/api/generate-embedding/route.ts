@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
     const fetchEmbedding = async (attempt = 1): Promise<any> => {
       const response = await fetch(
-        "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2",
+        "https://router.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2",
         {
           headers: {
             Authorization: `Bearer ${process.env.HUGGING_FACE_ACCESS_TOKEN}`,
